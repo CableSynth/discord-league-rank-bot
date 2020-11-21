@@ -6,17 +6,24 @@ use serenity::framework::standard::{
     macros::command,
 };
 
+const COMMANDS: [&str; 6] = [
+    "commands",
+    "rank",
+    "last5",
+    "clash",
+    "masteries",
+    "kappa",
+];
+
 #[command]
 pub async fn help(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
 
-    
-    if args.is_empty() {
-        
-        msg.channel_id.say(&ctx.http, format!("yes this is help, {}. type !help commands", msg.author)).await?;
-    }
-    // match args {
-    // };
-    msg.channel_id.say(&ctx.http, "yes this is help").await?;
+    let reply_message = match args.len() {
+        0 => format!("yes this is help, {}. type !help commands list of commands", msg.author),
+        1 => args.message().to_string(),
+        _ => format!("yes this is help, {}. only one argument at a time plz. type !help commands for list of commands", msg.author),
+    };
 
+    msg.channel_id.say(&ctx.http, reply_message).await?;
     Ok(())
 }
