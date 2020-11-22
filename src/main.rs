@@ -12,7 +12,7 @@ use serenity::{
     client::bridge::gateway::ShardManager,
     framework::standard::{
         StandardFramework, HelpOptions, help_commands, CommandGroup,
-        macros::{group, command, help},
+        macros::{group, command, hook}, Args, CommandResult
     },
     http::Http,
     model::{
@@ -53,35 +53,10 @@ impl EventHandler for Handler {
 #[group]
 struct General;
 
-// // The framework provides two built-in help commands for you to use.
-// // But you can also make your own customized help command that forwards
-// // to the behaviour of either of them.
-// #[help]
-// // This replaces the information that a user can pass
-// // a command-name as argument to gain specific information about it.
-// #[individual_command_tip =
-// "Hello! こんにちは！Hola! Bonjour! 您好!\n\
-// If you want more information about a specific command, just pass the command as argument."]
-// // Some arguments require a `{}` in order to replace it with contextual information.
-// // In this case our `{}` refers to a command's name.
-// #[command_not_found_text = "Could not find: `{}`."]
-// // Define the maximum Levenshtein-distance between a searched command-name
-// // and commands. If the distance is lower than or equal the set distance,
-// // it will be displayed as a suggestion.
-// // Setting the distance to 0 will disable suggestions.
-// #[max_levenshtein_distance(3)]
-
-// async fn my_help(
-//     context: &Context,
-//     msg: &Message,
-//     args: Args,
-//     help_options: &'static HelpOptions,
-//     groups: &[&'static CommandGroup],
-//     owners: HashSet<UserId>
-// ) -> CommandResult {
-//     let _ = help_commands::with_embeds(context, msg, args, help_options, groups, owners).await;
-//     Ok(())
-// }
+#[hook]
+async fn unknown_command(_ctx: &Context, _msg: &Message, unknown_command_name: &str) {
+    println!("Could not find command named '{}'", unknown_command_name);
+}
 
 #[tokio::main]
 async fn main() {
@@ -121,7 +96,8 @@ async fn main() {
         .configure(|c| c
                    .owners(owners)
                    .prefix("!"))
-        .help(&MY_HELP)
+        .unrecognised_command(unknown_command)
+        .help(&HELP)
         .group(&GENERAL_GROUP);
 
     let mut client = Client::builder(&token)
