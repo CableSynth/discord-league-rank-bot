@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use serenity::prelude::*;
 use serenity::http::*;
 use serenity::model::prelude::*;

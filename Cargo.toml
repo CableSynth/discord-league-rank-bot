@@ -5,6 +5,7 @@ authors = ["baum <lorencalebbaum@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+riven = "1.10.2"
 rustls = "0.18.1"
 dotenv = "0.15"
 tracing = "0.1"

@@ -1,6 +1,6 @@
 mod commands;
 
-use commands::help::*;
+use commands::{help::*, rank::*};
 use std::{
     collections::HashSet,
     env,
@@ -51,6 +51,7 @@ impl EventHandler for Handler {
 }
 
 #[group]
+#[commands(rank)]
 struct General;
 
 #[hook]
