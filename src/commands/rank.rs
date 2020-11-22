@@ -14,10 +14,15 @@ use riven::consts::{
 
 #[command]
 pub async fn rank(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
-    // let mut rt = tokio::runtime::Runtime::new().unwrap();
-    // rt.block_on(async {
-        
-    // });
+    
+    let mut summoner_q_type = QueueType::RANKED_SOLO_5x5;
+    if args.len() == 2 {
+        summoner_q_type = match args.single::<String>()?.as_str(){
+            "flex" => QueueType::RANKED_FLEX_SR,
+            "solo"| _ => QueueType::RANKED_SOLO_5x5,
+        };
+    }
+    
     let summoner_name = match args.single::<String>(){
         Ok(summoner_name) => summoner_name,
         Err(_sommoner_name) => {
@@ -40,22 +45,22 @@ pub async fn rank(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult
         .expect("Get rank failed");
     
     // make this better
-    let mut soloq = &summoner_league_info[0];
+    let mut returned_q = &summoner_league_info[0];
     for (_i, queue) in summoner_league_info.iter().enumerate() {
-        if queue.queue_type == QueueType::RANKED_SOLO_5x5 {
-            soloq = queue;
+        if queue.queue_type != summoner_q_type {
+            returned_q = queue;
             break;
-        } else {
-            soloq = queue
+        } else if {
+            returned_q = queue
         }
     }
     
     let response = MessageBuilder::new()
         .push("The rank of, ")
         .push_bold(&summoner_name)
-        .push("is")
-        .push_italic(soloq.tier)
-        .push_italic(soloq.rank)
+        .push(" is ")
+        .push_italic_safe(&returned_q.tier.to_string())
+        .push_italic_safe(&returned_q.rank.to_string())
         .build();
 
     if let Err(why) = msg.channel_id.say(&ctx.http, &response).await {
