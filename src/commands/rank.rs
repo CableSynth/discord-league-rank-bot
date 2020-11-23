@@ -26,8 +26,9 @@ pub async fn rank(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult
     let summoner_name = match args.single::<String>(){
         Ok(summoner_name) => summoner_name,
         Err(_sommoner_name) => {
-            msg.channel_id.say(&ctx.http, format!("No name passed to rank command")).await;
-            return Ok(())
+            msg.channel_id.say(&ctx.http, format!("No name passed to rank command")).await?;
+            "From Iron".to_string()
+            // return Err(())
         },
     };
     dotenv::dotenv().expect("Failed to load .env file");
@@ -47,11 +48,11 @@ pub async fn rank(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult
     // make this better
     let mut returned_q = &summoner_league_info[0];
     for (_i, queue) in summoner_league_info.iter().enumerate() {
-        if queue.queue_type != summoner_q_type {
+        if queue.queue_type == summoner_q_type {
             returned_q = queue;
             break;
-        } else if {
-            returned_q = queue
+        } else {
+            returned_q = queue;
         }
     }
     
